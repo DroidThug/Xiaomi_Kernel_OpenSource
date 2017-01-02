@@ -47,11 +47,12 @@ static int mmap_is_legacy(void)
 	return sysctl_legacy_va_layout;
 }
 
-unsigned long arch_mmap_rnd(void)
+static unsigned long mmap_rnd(void)
 {
 	unsigned long rnd;
 
-	rnd = (unsigned long)get_random_int() & STACK_RND_MASK;
+	if (current->flags & PF_RANDOMIZE)
+		rnd = (long)get_random_int() & STACK_RND_MASK;
 
 	return rnd << PAGE_SHIFT;
 }
